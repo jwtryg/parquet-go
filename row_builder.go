@@ -118,6 +118,16 @@ func (b *RowBuilder) Add(columnIndex int, columnValue Value) {
 	b.columns[columnIndex] = append(b.columns[columnIndex], columnValue)
 }
 
+func (b *RowBuilder) AddNull(columnIndex int, definitionLevel byte) {
+	level := &b.levels[columnIndex]
+	b.columns[columnIndex] = append(b.columns[columnIndex], Value{
+		columnIndex:     ^int16(columnIndex),
+		definitionLevel: definitionLevel,
+		repetitionLevel: level.repetitionLevel,
+	})
+	level.repetitionLevel = level.repetitionDepth
+}
+
 // Next must be called to indicate the start of a new repeated record for the
 // column at the given index.
 //
